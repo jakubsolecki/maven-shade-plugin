@@ -334,10 +334,16 @@ public class DefaultShader
                                                                JarOutputStream jos )
         throws IOException
     {
+
+        InstrumentationMatcher im = new InstrumentationMatcher();
+
         if ( manifestTransformer != null )
         {
             for ( File jar : shadeRequest.getJars() )
             {
+                im.addJarName( jar.getName() );
+                getLogger().info( "FOUND JAR NAME: " + jar.getName() );
+                getLogger().info( "FOUND JAR ABSOLUTE PATH: " + jar.getAbsolutePath() );
                 try ( JarFile jarFile = newJarFile( jar ) )
                 {
                     for ( Enumeration<JarEntry> en = jarFile.entries(); en.hasMoreElements(); )
@@ -357,6 +363,9 @@ public class DefaultShader
                     }
                 }
             }
+
+            im.searchForInstrumentationRules();
+
             if ( manifestTransformer.hasTransformedResource() )
             {
                 manifestTransformer.modifyOutputStream( jos );
